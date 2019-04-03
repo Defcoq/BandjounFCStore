@@ -41,7 +41,7 @@ namespace BandjounFCStore
             services.AddScoped<Cart>(sp => SessionCart.GetCart(sp));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IOrderRepository, EFOrderRepository>();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_0);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddMemoryCache();
             services.AddSession();
             // services.AddMvcCore();

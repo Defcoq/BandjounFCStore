@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "name": "asp.net",
+  "private": true,
+  "devDependencies": {
+    "bootstrap": "^4.0.0-alpha.6",
+    "css-loader": "^2.1.1",
+    "file-loader": "^3.0.1",
+    "jquery": "^3.3.1",
+    "popper.js": "1.12.9",
+    "style-loader": "^0.23.1",
+    "url-loader": "^1.1.2",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  },
+  "scripts": {
+    "start": "webpack --config webpack.config.js --watch --progress --profile",
+    "build": "webpack --config webpack.config.js --progress --profile",
+    "prod": "webpack --env.NODE_ENV=production --config webpack.config.js --progress"
+  }
+}

@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <environment names="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link href="~/jqwidgets/styles/jqx.base.css" rel="stylesheet" />
+        <link href="~/jqwidgets/styles/jqx.darkblue.css" rel="stylesheet" />
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+        <script src="~/jqwidgets/jqxcore.js"></script>
+        <script src="~/jqwidgets/jqxdata.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/dist/main.js" asp-append-version="true"></script>
+    </environment>
+</head>
+
+<body>
+    <div>
+        @RenderBody()
+    </div>
+</body>
+</html>
