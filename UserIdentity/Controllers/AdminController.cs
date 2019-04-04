@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using UserIdentity.ViewModels;
 
 namespace UserIdentity.Controllers
 {
+    [Authorize(Roles ="Admin,Users")]
     public class AdminController : Controller
     {
         private UserManager<AppUser> userManager;
