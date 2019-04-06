@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,8 +30,42 @@ namespace UserIdentity
         {
             services.AddTransient<IUserValidator<AppUser>, CustomUserValidator>();
             services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordValidatore>();
+            services.AddSingleton<IClaimsTransformation, LocationClaimsProvider>();
+            services.AddTransient<IAuthorizationHandler, BlockUsersHandler>();
+            services.AddTransient<IAuthorizationHandler, DocumentAuthorizationHandler>();
+            services.AddAuthorization(options => {
+
+                options.AddPolicy("DCUsers", policy =>
+                {
+                    policy.RequireRole("Users");
+                    
+                    policy.RequireClaim(ClaimTypes.StateOrProvince, "DC");
+                });
+
+                options.AddPolicy("NotBob", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.AddRequirements(new BlockUsersRequirement("Bob"));
+                });
+
+                options.AddPolicy("AuthorsAndEditors", policy => {
+                    policy.AddRequirements(new DocumentAuthorizationRequirement
+                    {
+                        AllowAuthors = true,
+                        AllowEditors = true
+                    });
+                });
+
+
+
+            });
+            services.AddAuthentication().AddGoogle(opts => {
+                opts.ClientId = "296694929092-21udo50mte70eki1ks7faab7mleelqfp.apps.googleusercontent.com";
+                opts.ClientSecret = "B6KvI8cbuMMPjfTzZQiugj5t";
+            });
             services.AddDbContext<AppIdentityDbContext>(options => 
             options.UseSqlServer(Configuration["Data:UserIdentity:ConnectionString"]));
+
 
             services.AddIdentity<AppUser, IdentityRole>(options => {
                 options.User.RequireUniqueEmail = true;
@@ -57,7 +94,7 @@ namespace UserIdentity
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseMvcWithDefaultRoute();
-            AppIdentityDbContext.CreateAdminAccount(app.ApplicationServices, Configuration);
+           // AppIdentityDbContext.CreateAdminAccount(app.ApplicationServices, Configuration);
 
             //app.Run(async (context) =>
             //{
