@@ -8,10 +8,12 @@
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link href="~/jqwidgets/styles/jqx.base.css" rel="stylesheet" />
         <link href="~/jqwidgets/styles/jqx.darkblue.css" rel="stylesheet" />
+        @Html.DevExpress().StyleSheets()
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
         <script src="~/jqwidgets/jqxcore.js"></script>
         <script src="~/jqwidgets/jqxdata.js"></script>
+        @Html.DevExpress().Scripts()
     </environment>
     <environment names="Staging,Production">
         <script src="~/dist/main.js" asp-append-version="true"></script>
@@ -22,5 +24,7 @@
     <div>
         @RenderBody()
     </div>
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

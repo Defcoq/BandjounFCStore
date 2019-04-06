@@ -1,0 +1,48 @@
+@inject UserIdentity.Models.AppIdentityDbContext context
+@model IEnumerable<UserIdentity.ViewModels.AppUserVM>
+
+@(Html.DevExpress()
+    .BootstrapGridView<UserIdentity.ViewModels.AppUserVM>()
+    .Name("GridView")
+    .Settings(settings => {
+        settings.ShowGroupPanel(true);
+        settings.ShowHeaderFilterButton(true);
+        settings.ShowFilterRowMenu(true);
+        settings.ShowFilterRow(true);
+        settings.ShowFooter(true);
+        
+    })
+        .SettingsBehavior(settings => settings.AllowSelectByRowClick(true))
+            .SettingsEditing(editing => editing.Mode(GridViewEditingMode.Inline))
+        .Routes(routes => routes
+                .MapRoute(r => r
+            .RouteType(GridViewRouteType.AddRow)
+            .Action("GridViewPartialAddNew")
+            .Controller("Admin"))
+        .MapRoute(r => r
+            .RouteType(GridViewRouteType.UpdateRow)
+            .Action("GridViewPartialUpdate")
+            .Controller("Admin"))
+            
+        .MapRoute(r => r
+            .RouteType(GridViewRouteType.DeleteRow)
+            .Action("GridViewPartialDelete")
+            .Controller("Admin"))
+                .MapRoute(r => r
+            .Action("GridViewPartial")
+            .Controller("Admin")))
+
+    .KeyFieldName("Id")
+    .Columns(columns => {
+        columns
+.AddCommandColumn()
+.ShowNewButtonInHeader(true)
+.ShowEditButton(true)
+.ShowDeleteButton(true);
+        columns.Add(m => m.City);
+        columns.Add(m => m.Id);
+        columns.Add(m => m.UserName);
+        columns.Add(m => m.Email);
+    })
+    .EditErrorText(ViewData["ErrorMessage"]?.ToString())
+    .Bind(context.Users))

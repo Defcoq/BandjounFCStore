@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using DevExpress.AspNetCore.Bootstrap;
+using DevExpress.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -31,7 +33,20 @@ namespace UserIdentity.Controllers
 
         public IActionResult Index()
         {
-            return View(userManager.Users);
+          List<AppUser> users = userManager.Users.ToList();
+            List<AppUserVM> usersVM = new List<AppUserVM>();
+            foreach (AppUser user in users)
+            {
+                AppUserVM usVM = new AppUserVM();
+                usVM.UserName = user.UserName;
+                usVM.Email = user.Email;
+                usVM.Id = user.Id;
+                usVM.City = user.City.ToString();
+                usersVM.Add(usVM);
+
+            }
+            return View(usersVM);
+            //return View(userManager.Users);
         }
 
 
@@ -164,5 +179,65 @@ namespace UserIdentity.Controllers
                 ModelState.AddModelError("", error.Description);
             }
         }
+        #region add by devexpress
+        public IActionResult GridViewPartial()
+        {
+            var db = HttpContext.RequestServices.GetService(typeof(UserIdentity.Models.AppIdentityDbContext)) as UserIdentity.Models.AppIdentityDbContext;
+            return PartialView("~/Views/Admin/GridViewPartial.cshtml", db.Users);
+        }
+        public IActionResult GridViewPartialAddNew(UserIdentity.Models.AppUser item)
+        {
+            var db = HttpContext.RequestServices.GetService(typeof(UserIdentity.Models.AppIdentityDbContext)) as UserIdentity.Models.AppIdentityDbContext;
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    item.Id = db.Users.Max(p => p.Id) + 1; // Remove this line if your Primary Key is automatically incremented at your database/model level
+                    db.Users.Add(item);
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                ViewData["error"] = e.Message;
+            }
+            return PartialView("~/Views/Admin/GridViewPartial.cshtml", db.Users);
+        }
+        public IActionResult GridViewPartialUpdate(UserIdentity.Models.AppUser item)
+        {
+            var db = HttpContext.RequestServices.GetService(typeof(UserIdentity.Models.AppIdentityDbContext)) as UserIdentity.Models.AppIdentityDbContext;
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Users.Update(item);
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                ViewData["error"] = e.Message;
+            }
+            return PartialView("~/Views/Admin/GridViewPartial.cshtml", db.Users);
+        }
+        public IActionResult GridViewPartialDelete(System.String Id)
+        {
+            var db = HttpContext.RequestServices.GetService(typeof(UserIdentity.Models.AppIdentityDbContext)) as UserIdentity.Models.AppIdentityDbContext;
+            try
+            {
+                var item = db.Users.FirstOrDefault(i => i.Id == Id);
+                if (ModelState.IsValid)
+                {
+                    db.Users.Remove(item);
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                ViewData["error"] = e.Message;
+            }
+            return PartialView("~/Views/Admin/GridViewPartial.cshtml", db.Users);
+        }
+        #endregion
     }
 }
