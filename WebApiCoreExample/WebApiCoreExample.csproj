@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="ClientApp\Angular 6 client\" />
+    <Folder Include="ClientApp\Angular 7 webpack\" />
   </ItemGroup>
 
 </Project>

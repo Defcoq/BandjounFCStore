@@ -58,16 +58,19 @@ namespace WebApiCoreExample.ApiController
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-
+            user.Token = tokenString;
+            var userdto = _mapper.Map<UserDto>(user);
+            userdto.Password = null;
             // return basic user info (without password) and token to store client side
-            return Ok(new
-            {
-                Id = user.Id,
-                Username = user.Username,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Token = tokenString
-            });
+            //return Ok(new
+            //{
+            //    Id = user.Id,
+            //    Username = user.Username,
+            //    FirstName = user.FirstName,
+            //    LastName = user.LastName,
+            //    Token = tokenString
+            //});
+            return Ok(userdto);
         }
 
         [AllowAnonymous]
@@ -102,7 +105,18 @@ namespace WebApiCoreExample.ApiController
         public IActionResult GetById(int id)
         {
             var user = _userService.GetById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var currentUserId = int.Parse(User.Identity.Name);
+            if (id != currentUserId && !User.IsInRole(Role.Admin))
+            {
+                return Forbid();
+            }
             var userDto = _mapper.Map<UserDto>(user);
+            userDto.Password = null;
             return Ok(userDto);
         }
 
